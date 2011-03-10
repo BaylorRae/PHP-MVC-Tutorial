@@ -55,7 +55,28 @@ class Map extends Object {
       die('The class <strong>' . $class_name . '</strong> could not be found in <pre>' . APP_PATH . 'controllers/' . $controller . '_controller.php</pre>');
         
     // include the view file
-    self::load_view($controller, $action, $format);
+    // self::load_view($controller, $action, $format);
+    
+    // load the layout
+    $layout_path = self::get_layout($controller, $action, $format);
+    if( !empty($layout_path) ) {
+      $layout = file_get_contents($layout_path);
+      
+      // replace {PAGE_CONTENT} view file
+      $view_path = self::view_path($controller, $action, $format);
+      if( !empty($view_path) )
+        $layout = str_replace('{PAGE_CONTENT}', file_get_contents($view_path), $layout);
+      
+      $filename = BASE_PATH . 'tmp/' . time() . '.php';
+      
+      $file = fopen($filename, 'a');
+      fwrite($file, $layout);
+      fclose($file);
+      
+      self::load_layout($filename);
+      
+      unlink($filename);
+    }
   }
   
   public static function load_controller($name) {
@@ -67,8 +88,8 @@ class Map extends Object {
   }
   
   public static function load_view($controller, $action, $format) {
-    $view_path = APP_PATH . 'views/' . $controller . '/' . $action . '.' . $format . '.php';
-    if( file_exists($view_path) ) {
+    $view_path = self::view_path();
+    if( !empty($view_path) ) {
       unset($controller, $action, $format);
       
       foreach( self::$user_vars as $var => $value ) {
@@ -79,4 +100,47 @@ class Map extends Object {
     }
   }
   
+  public static function get_layout($controller, $action, $format) {
+    // controller-action.format.php
+    $controller_action_path = APP_PATH . 'views/layouts/' . $controller . '-' . $action . '.' . $format . '.php';
+    
+    // controller.format.php
+    $controller_path = APP_PATH . 'views/layouts/' . $controller . '.' . $format . '.php';
+    
+    // application.format.php
+    $application_path = APP_PATH . 'views/layouts/application.' . $format . '.php';
+    
+    $path_to_use = null;
+    
+    // find the path to use
+    if( file_exists($controller_action_path) )
+      $path_to_use = $controller_action_path;
+      
+    elseif( file_exists($controller_path) )
+      $path_to_use = $controller_path;
+      
+    elseif( file_exists($application_path) )
+      $path_to_use = $application_path;
+      
+    return $path_to_use;
+  }
+  
+  public static function view_path($controller, $action, $format) {
+    $view_path = APP_PATH . 'views/' . $controller . '/' . $action . '.' . $format . '.php';
+    $path = null;
+    
+    if( file_exists($view_path) )
+      $path = $view_path;
+    
+    return $path;
+  }
+  
+  public static function load_layout($filename) {
+    foreach( self::$user_vars as $var => $value ) {
+      $$var = $value;
+    }
+    
+    include $filename;
+  }
+
 }
