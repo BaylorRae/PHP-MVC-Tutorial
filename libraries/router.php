@@ -1,6 +1,6 @@
 <?php
 
-class Map {
+class Map extends Object {
   public static $path = null;
   
   public static function get($route, $path) {
@@ -68,8 +68,15 @@ class Map {
   
   public static function load_view($controller, $action, $format) {
     $view_path = APP_PATH . 'views/' . $controller . '/' . $action . '.' . $format . '.php';
-    if( file_exists($view_path) )
+    if( file_exists($view_path) ) {
+      unset($controller, $action, $format);
+      
+      foreach( self::$user_vars as $var => $value ) {
+        $$var = $value;
+      }
+      
       include_once $view_path;
+    }
   }
   
 }

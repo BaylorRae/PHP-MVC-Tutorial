@@ -1,6 +1,8 @@
 <?php
 
 // contain's methods for all the user defined controllers
-class Controller {
+class Controller extends Object {
+  
+
   
 }
