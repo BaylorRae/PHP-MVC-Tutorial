@@ -3,4 +3,4 @@
 
 Map::get('/', 'welcome#index');
 
-// Map::resource('welcome');
+Map::resource('welcome');

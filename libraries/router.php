@@ -3,6 +3,16 @@
 class Map extends Object {
   public static $path = null;
   
+  public static function resource($controller) {
+    self::get('/' . $controller, $controller . '#index');
+    self::get('/' . $controller . '/new', $controller . '#add');
+    self::get('/' . $controller . '/edit/(.*)', $controller . '#edit');
+    
+    self::post('/' . $controller, $controller . '#create');
+    self::put('/' . $controller, $controller . '#update');
+    self::delete('/' . $controller, $controller . '#destroy');
+  }
+  
   public static function get($route, $path) {
     self::$path = $path;
   	Sammy::process($route, 'GET');
@@ -82,6 +92,8 @@ class Map extends Object {
       $view_path = self::view_path($controller, $action, $format);
       if( !empty($view_path) )
         $layout = str_replace('{PAGE_CONTENT}', file_get_contents($view_path), $layout);
+      else
+        $layout = str_replace('{PAGE_CONTENT}', '', $layout);
       
       $filename = BASE_PATH . 'tmp/' . time() . '.php';
       
