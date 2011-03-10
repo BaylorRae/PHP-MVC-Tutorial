@@ -8,26 +8,6 @@
  * @copyright	2010 Dan Horrigan
  */
 
-function get($route, $callback) {
-	Sammy::process($route, $callback, 'GET');
-}
-
-function post($route, $callback) {
-	Sammy::process($route, $callback, 'POST');
-}
-
-function put($route, $callback) {
-	Sammy::process($route, $callback, 'PUT');
-}
-
-function delete($route, $callback) {
-	Sammy::process($route, $callback, 'DELETE');
-}
-
-function ajax($route, $callback) {
-	Sammy::process($route, $callback, 'XMLHttpRequest');
-}
-
 class Sammy {
 	
 	public static $route_found = false;
@@ -75,8 +55,11 @@ class Sammy {
     
     if( $extension_test == '.' . $extension )
       $sammy->format = $extension;
+    else
+      $sammy->format = 'html';
 		
 		static::$route_found = true;
+		Map::dispatch($sammy->format);
 	}
 	
 	public function __construct() {

@@ -1,3 +1,4 @@
 <?php
+// Runs top to bottom (most important should be at the top)
 
-Map::get('/', 'controller#action');
+Map::get('/', 'welcome#index');
