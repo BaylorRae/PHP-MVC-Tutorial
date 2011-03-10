@@ -32,7 +32,8 @@ class Sammy {
 
 	public static function run() {
 		if( !static::$route_found ) {
-			echo 'Route not defined!';
+		  $sammy = Sammy::instance();
+			Map::pre_dispatch($sammy->get_uri(false));
 		}
 		
 		ob_end_flush();

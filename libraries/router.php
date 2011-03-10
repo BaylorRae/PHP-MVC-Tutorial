@@ -28,6 +28,22 @@ class Map extends Object {
   	Sammy::process($route, 'XMLHttpRequest');
   }
   
+  public static function pre_dispatch($uri) {
+    $path = explode('/', $uri);
+    $controller = $path[0];
+    $action = (empty($path[1])) ? 'index' : $path[1];
+    $format = 'html';
+    
+    if( preg_match('/\.(\w+)$/', $action, $matches) ) {
+      $action = str_replace($matches[0], '', $action);
+      $format = $matches[1];
+    }
+    
+    self::$path = $controller . '#' . $action;
+    self::dispatch($format);
+    
+  }
+  
   public static function dispatch($format) {
     
     // runs when find a matching route
