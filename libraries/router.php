@@ -71,7 +71,7 @@ class Map extends Object {
     
     if( class_exists($class_name) ) {
       $tmp_class = new $class_name();
-      
+            
       // run the matching action
       if( is_callable(array($tmp_class, $action)) ) {
         $tmp_class->$action();
@@ -79,7 +79,9 @@ class Map extends Object {
         die('The action <strong>' . $action . '</strong> could not be called from the controller <strong>' . $class_name . '</strong>');
     }else
       die('The class <strong>' . $class_name . '</strong> could not be found in <pre>' . APP_PATH . 'controllers/' . $controller . '_controller.php</pre>');
-        
+    
+    self::get_user_vars($tmp_class);
+    
     // include the view file
     // self::load_view($controller, $action, $format);
     
@@ -120,7 +122,7 @@ class Map extends Object {
     if( !empty($view_path) ) {
       unset($controller, $action, $format);
       
-      foreach( self::$user_vars as $var => $value ) {
+      foreach( self::$__user_vars as $var => $value ) {
         $$var = $value;
       }
       
@@ -164,7 +166,7 @@ class Map extends Object {
   }
   
   public static function load_layout($filename) {
-    foreach( self::$user_vars as $var => $value ) {
+    foreach( self::$__user_vars as $var => $value ) {
       $$var = $value;
     }
     
